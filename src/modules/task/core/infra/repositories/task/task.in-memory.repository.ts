@@ -1,9 +1,9 @@
 // modules/tasks/core/repositories/external-task-repo.ts
 
 import { Task } from '@/task/core/domain/entities/task.entity';
-import { TaskRepository } from '@/task/core/repositories/task/task.repository';
+import { TaskRepository } from '@/task/core/repositories/task.repository';
 
-export class InMemoryTaskRepository extends TaskRepository {
+export class InMemoryTaskRepository implements TaskRepository {
   // Repositório em memória para armazenar as tarefas
   private tasks: Task[] = [];
 

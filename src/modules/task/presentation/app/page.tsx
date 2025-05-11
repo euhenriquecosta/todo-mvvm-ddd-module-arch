@@ -1,8 +1,12 @@
-export default function TaskPage() {
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <h1 className="text-4xl font-bold">Task Management</h1>
-      <p className="mt-4 text-lg">Manage your tasks efficiently.</p>
-    </div>
-  );
-}
+// app/page.tsx
+import React from 'react';
+import { useTaskViewModel } from './task.vm';
+import { TaskView } from './task.view';
+
+const TaskListPage = () => {
+  const methods = useTaskViewModel();
+
+  return <TaskView {...methods} />;
+};
+
+export default TaskListPage;

@@ -1,5 +1,5 @@
 import { Task } from '@/task/core/domain/entities/task.entity';
-import { TaskRepository } from '@/task/core/repositories/task/task.repository';
+import { TaskRepository } from '@/task/core/repositories/task.repository';
 
 export class UpdateTask {
   private taskRepo: TaskRepository;

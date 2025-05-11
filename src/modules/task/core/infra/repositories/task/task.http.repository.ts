@@ -3,7 +3,9 @@
 import { HttpMethod, IHttpClient } from '@/task/core/domain/contracts/http-client';
 import { Task } from '@/task/core/domain/entities/task.entity';
 
-export class TaskRepository {
+import { TaskRepository } from '@/task/core/repositories/task.repository';
+
+export class TaskHttpRepository implements TaskRepository {
   private httpClient: IHttpClient;
 
   constructor(httpClient: IHttpClient) {
@@ -16,7 +18,19 @@ export class TaskRepository {
       method: HttpMethod.GET,
       endpoint: '/tasks',
     });
-    return response;
+    return response.map(
+      (taskData: any) =>
+        new Task(
+          taskData.id,
+          taskData.title,
+          taskData.description,
+          new Date(taskData.dueDate),
+          taskData.status,
+          taskData.priority,
+          new Date(taskData.createdAt),
+          new Date(taskData.updatedAt),
+        ),
+    );
   }
 
   // Método para criar uma nova tarefa
@@ -26,7 +40,17 @@ export class TaskRepository {
       endpoint: '/tasks',
       body: task,
     });
-    return response;
+
+    return new Task(
+      response.id,
+      response.title,
+      response.description,
+      new Date(response.dueDate),
+      response.status,
+      response.priority,
+      new Date(response.createdAt),
+      new Date(response.updatedAt),
+    );
   }
 
   // Método para atualizar uma tarefa
@@ -36,7 +60,17 @@ export class TaskRepository {
       endpoint: `/tasks/${taskId}`,
       body: task,
     });
-    return response;
+
+    return new Task(
+      response.id,
+      response.title,
+      response.description,
+      new Date(response.dueDate),
+      response.status,
+      response.priority,
+      new Date(response.createdAt),
+      new Date(response.updatedAt),
+    );
   }
 
   // Método para excluir uma tarefa

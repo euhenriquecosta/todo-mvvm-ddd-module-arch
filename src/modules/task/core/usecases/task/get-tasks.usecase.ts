@@ -1,4 +1,4 @@
-import { TaskRepository } from '@/task/core/repositories/task/task.repository';
+import { TaskRepository } from '@/task/core/repositories/task.repository';
 import { Task } from '@/task/core/domain/entities/task.entity';
 
 export class GetTasks {

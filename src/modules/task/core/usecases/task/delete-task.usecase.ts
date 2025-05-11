@@ -1,5 +1,4 @@
-import { TaskRepository } from '@/task/core/repositories/task/task.repository';
-
+import { TaskRepository } from '@/task/core/repositories/task.repository';
 export class DeleteTask {
   private taskRepo: TaskRepository;
 
