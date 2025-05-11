@@ -1,38 +1,54 @@
+'use client';
 import { useState, useEffect } from 'react';
-import { Task as DomainTask } from '@/task/core/domain/entities/task.entity';
-import { Task as PresentationTask } from '@/task/presentation/app/task.model';
-import { TaskRepository } from '@/task/core/repositories/task.repository'; // Supondo que TaskRepository já exista
-import { TaskHttpRepository } from '@/task/core/infra/repositories/task/task.http.repository'; // Repositório que faz chamadas HTTP
-import { HttpClient } from '@/task/core/infra/http/axios/axios-adapter';
+import { Task as PresentationTask } from '@/modules/task/presentation/app/task.model';
+
+import { useCreateTask, useDeleteTask, useListTasks } from '../hooks/use-task-service';
+import { CreateTaskBody, CreateTaskResponse } from '../../core/repositories/task.repository';
+import { UseMutationResult } from '@tanstack/react-query';
 
 export interface TaskViewModel {
   tasks: PresentationTask[];
   loading: boolean;
+  error: Error | null;
+  title: string;
+  description: string;
+  handleCreateTask: () => void;
+  handleDeleteTask: (id: string) => void;
+  setTitle: (title: string) => void;
+  setDescription: (description: string) => void;
+  createTaskMutation: UseMutationResult<CreateTaskResponse, Error, CreateTaskBody>;
+  deleteTaskMutation: UseMutationResult<void, Error, string>;
 }
-
 export function useTaskViewModel(): TaskViewModel {
-  const [tasks, setTasks] = useState<PresentationTask[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const httpClient = HttpClient.create();
-  const taskRepo: TaskRepository = new TaskHttpRepository(httpClient);
+  const [error, setError] = useState<Error | null>(null);
+
+  const { data: fetchedTasks, isLoading, isError, error: fetchError } = useListTasks();
+  const createTaskMutation = useCreateTask();
+  const deleteTaskMutation = useDeleteTask();
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+
+  const handleCreateTask = () => {
+    if (title && description) {
+      createTaskMutation.mutate({ title, description, completed: false });
+      setTitle('');
+      setDescription('');
+    }
+  };
+
+  const handleDeleteTask = (id: string) => {
+    deleteTaskMutation.mutate(id);
+  };
+
+  const tasks = fetchedTasks || [];
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const taskData: DomainTask[] = await taskRepo.getTasks();
-        const presentationTasks: PresentationTask[] = taskData.map(
-          domainTask => new PresentationTask(domainTask),
-        );
-        setTasks(presentationTasks);
-      } catch (error) {
-        console.error('Failed to fetch tasks', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (isError && fetchError) {
+      setError(fetchError);
+    } else {
+      setError(null);
+    }
+  }, [isError, fetchError]);
 
-    fetchTasks();
-  }, []);
-
-  return { tasks, loading };
+  return { tasks, loading: isLoading, error, title, description, handleCreateTask, handleDeleteTask, setTitle, setDescription, createTaskMutation, deleteTaskMutation };
 }

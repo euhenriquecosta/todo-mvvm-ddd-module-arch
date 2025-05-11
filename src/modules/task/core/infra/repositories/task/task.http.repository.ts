@@ -1,10 +1,16 @@
 // modules/tasks/core/repositories/external-task-repo.ts
 
 import { HttpMethod, IHttpClient } from '@/task/core/domain/contracts/http-client';
-import { Task } from '@/task/core/domain/entities/task.entity';
 
-import { TaskRepository } from '@/task/core/repositories/task.repository';
-
+import {
+  CreateTaskBody,
+  CreateTaskResponse,
+  GetTasksResponse,
+  TaskParam,
+  TaskRepository,
+  UpdateTaskBody,
+  UpdateTaskResponse,
+} from '@/task/core/repositories/task.repository';
 export class TaskHttpRepository implements TaskRepository {
   private httpClient: IHttpClient;
 
@@ -13,68 +19,38 @@ export class TaskHttpRepository implements TaskRepository {
   }
 
   // Método para buscar todas as tarefas
-  async getTasks(): Promise<Task[]> {
-    const response = await this.httpClient.sendRequest<Task[], null>({
+  async getTasks(): Promise<GetTasksResponse> {
+    const response = (await this.httpClient.sendRequest({
       method: HttpMethod.GET,
       endpoint: '/tasks',
-    });
-    return response.map(
-      (taskData: any) =>
-        new Task(
-          taskData.id,
-          taskData.title,
-          taskData.description,
-          new Date(taskData.dueDate),
-          taskData.status,
-          taskData.priority,
-          new Date(taskData.createdAt),
-          new Date(taskData.updatedAt),
-        ),
-    );
+    })) as GetTasksResponse;
+    return response;
   }
 
   // Método para criar uma nova tarefa
-  async createTask(task: Task): Promise<Task> {
-    const response = await this.httpClient.sendRequest<Task, Task>({
+  async createTask(task: CreateTaskBody): Promise<CreateTaskResponse> {
+    const response = await this.httpClient.sendRequest<CreateTaskResponse, CreateTaskBody>({
       method: HttpMethod.POST,
       endpoint: '/tasks',
       body: task,
     });
 
-    return new Task(
-      response.id,
-      response.title,
-      response.description,
-      new Date(response.dueDate),
-      response.status,
-      response.priority,
-      new Date(response.createdAt),
-      new Date(response.updatedAt),
-    );
+    return response;
   }
 
   // Método para atualizar uma tarefa
-  async updateTask(taskId: number, task: Task): Promise<Task> {
-    const response = await this.httpClient.sendRequest<Task, Task>({
+  async updateTask(taskId: TaskParam, task: UpdateTaskBody): Promise<UpdateTaskResponse> {
+    const response = await this.httpClient.sendRequest<UpdateTaskResponse, UpdateTaskBody>({
       method: HttpMethod.PUT,
       endpoint: `/tasks/${taskId}`,
       body: task,
     });
 
-    return new Task(
-      response.id,
-      response.title,
-      response.description,
-      new Date(response.dueDate),
-      response.status,
-      response.priority,
-      new Date(response.createdAt),
-      new Date(response.updatedAt),
-    );
+    return response;
   }
 
   // Método para excluir uma tarefa
-  async deleteTask(taskId: number): Promise<void> {
+  async deleteTask(taskId: TaskParam): Promise<void> {
     await this.httpClient.sendRequest<void, null>({
       method: HttpMethod.DELETE,
       endpoint: `/tasks/${taskId}`,

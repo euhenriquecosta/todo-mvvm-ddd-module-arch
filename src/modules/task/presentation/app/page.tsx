@@ -1,3 +1,4 @@
+'use client';
 // app/page.tsx
 import React from 'react';
 import { useTaskViewModel } from './task.vm';

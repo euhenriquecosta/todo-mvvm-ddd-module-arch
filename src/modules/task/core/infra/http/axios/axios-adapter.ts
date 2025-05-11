@@ -1,8 +1,11 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import { IHttpClient, HttpRequest } from '@/modules/task/core/domain/contracts/http-client';
 
-const baseURL = 'http://localhost:3000';
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
+if (!process.env.NEXT_PUBLIC_API_URL) {
+  throw new Error('NEXT_PUBLIC_API_URL is not defined');
+}
 export class HttpClient implements IHttpClient {
   private api: AxiosInstance;
 
