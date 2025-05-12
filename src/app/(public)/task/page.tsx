@@ -1,1 +1,1 @@
-export { default } from '@/task/presentation/app/page';
+export { default } from '@/modules/task/app/page';

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "dev:server": "json-server --watch src/modules/task/core/infra/data/http.json --port 3001"
+    "dev:server": "json-server --watch src/modules/task/data/http.json --port 3001"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.75.7",
