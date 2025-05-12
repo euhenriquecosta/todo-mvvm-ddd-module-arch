@@ -4,7 +4,7 @@
 /node_modules
 /.pnp
 .pnp.*
-.yarn/*
+.yarn/
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
@@ -40,6 +40,10 @@ omlet-cli.log*
 
 # vercel
 .vercel
+
+# swc
+.swcrc
+.swc/
 
 # typescript
 *.tsbuildinfo
